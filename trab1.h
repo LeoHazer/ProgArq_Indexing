@@ -26,15 +26,25 @@ typedef struct elemento
  CRIA LISTA COM SENTINELA - OPCIONAL
  */
 
+elemento *CriaLista()
+{
+    elemento *novo = (elemento*) malloc(sizeof(elemento));
+    strcpy(novo->word.letras, "");
+    novo->word.qtdOcorrencias = 0;
+    novo->word.linhas = NULL;
+    novo->prox = novo->ant = novo;
+    return novo;
+}
+
+
 /**
  PREPARA MEMÓRIA PARA UM NOVO ELEMENTO NA LISTA*/
-elemento *CriaElemento(char word[])
+elemento *CriaElemento(Palavra nWord)
 {
     elemento *resp=(elemento*) malloc(sizeof(elemento));
-    strcpy(resp->word.letras, word);
-    resp->word.qtdOcorrencias=1;
-    resp->prox=NULL;
-    resp->ant=NULL;
+    resp->word = nWord;
+    resp->prox = resp->ant = NULL;
+
     return resp;
 }
 
@@ -49,8 +59,21 @@ elemento *Existe(elemento *lista, char word[])
     return (lista->word.letras == word)? lista: Existe(lista->prox, word);
 }
 
+
+elemento *buscaPalavra(elemento *lista, char *bPalavra)
+{
+    elemento *temp = lista->prox;
+    printf("%s\n", bPalavra);
+    while (temp!=lista && strcmp(temp->word.letras, bPalavra)!=0 )
+    {
+        temp = temp->prox;
+        printf("%s\n", temp->word.letras);
+    }
+    return temp;
+}
+
 /**
- ADICIONA NOVA LINHA NAS OCORR�NCIAS DA PALAVRA GERADA*/
+ ADICIONA NOVA LINHA NAS OCORRÊNCIAS DA PALAVRA GERADA*/
 void criaLinha(elemento *tmp, int addLinha)
 {
     tmp->word.linhas = (int*) realloc(tmp->word.linhas, (tmp->word.qtdOcorrencias+1)*sizeof(int));
@@ -58,14 +81,14 @@ void criaLinha(elemento *tmp, int addLinha)
     tmp->word.qtdOcorrencias++;
 }
 
-/*EXIBE A OCORR�NCIA DAS PALAVRAS*/
+/*EXIBE A OCORRÊNCIA DAS PALAVRAS*/
 void mostraOcorrencia(Palavra plvr)
 {
-    printf("PALAVRA: %s | OCORR�NCIA: %i | LINHAS: ", plvr.letras, plvr.qtdOcorrencias);
+    printf("PALAVRA: %s | OCORRENCIA: %i | LINHAS: ", plvr.letras, plvr.qtdOcorrencias);
     for (int i = 0; i < plvr.qtdOcorrencias; i++)
     {
-        printf(" %d", *plvr.linhas);
-        printf("\n\n");
+        printf(" %d", plvr.linhas[i]);
+        printf("\n");
     }
 
 }
@@ -74,17 +97,21 @@ void mostraOcorrencia(Palavra plvr)
 
 
 /**
- LISTAR PALAVRAS DO �NDICE*/
+ LISTAR PALAVRAS DO ÍNDICE*/
+/**
+ LISTAR PALAVRAS DO ÍNDICE*/
 void Listar(elemento *lista)
 {
-    if(lista!=NULL)
+    elemento *temp = temp->prox;
+    while (temp != lista)
     {
-        printf("%s\n",lista->word.letras);
-        Listar(lista->prox);
+        mostraOcorrencia(temp->word);
+        temp = temp->prox;
     }
+
 }
 
-//Destr�i Lista e retorna NULL no final
+//Destrói Lista e retorna NULL no final
 elemento *DestruirLista(elemento *lista)
 {
     if(lista!=NULL)
@@ -98,12 +125,28 @@ elemento *DestruirLista(elemento *lista)
 /**
  DESTRUIR O ÍNDICE*/
 
+void destroiIndice(elemento *lst)
+{
+    elemento *temp = lst;
+    lst->ant->prox = NULL;
+
+    while (temp != NULL)
+    {
+        lst = lst->prox;
+        free(temp->word.linhas);
+        free(temp);
+        temp = lst;
+    }
+
+}
+
+
 
 /**
  ORDEM ALFABÉTICA*/
 void ordemAlfabetica(elemento *lst, Palavra plvr)
 {
-    elemento *novo = CriaElemento(plvr.letras);
+    elemento *novo = CriaElemento(plvr);
     elemento *tmp = lst->prox;
     while (tmp!=lst && strcmp(plvr.letras, tmp->word.letras)>0)
     {
@@ -117,17 +160,18 @@ void ordemAlfabetica(elemento *lst, Palavra plvr)
 }
 
 
-
-
 /**
- INSERE NO FINAL DA LISTA */
+ INSERE PALAVRA NO FINAL DA LISTA */
 
 void insereFim(elemento *lst, Palavra plvr)
 {
-    elemento *novo = CriaElemento(plvr.letras);
+    printf("\nINSERE_FIM1\n");
+    elemento *novo = CriaElemento(plvr);
     novo->prox = lst;
     novo->ant = lst->ant;
     lst->ant->prox = novo;
     lst->ant = novo;
+    printf("\nINSERE_FIM2\n");
 }
 #endif // Trab1_h
+

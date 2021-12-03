@@ -63,11 +63,11 @@ elemento *Existe(elemento *lista, char word[])
 elemento *buscaPalavra(elemento *lista, char *bPalavra)
 {
     elemento *temp = lista->prox;
-    printf("%s\n", bPalavra);
+    //printf("\nResultado da busca pela palavra: %s\n", bPalavra);
     while (temp!=lista && strcmp(temp->word.letras, bPalavra)!=0 )
     {
         temp = temp->prox;
-        printf("%s\n", temp->word.letras);
+        //printf("%s\n", temp->word.letras);
     }
     return temp;
 }
@@ -84,20 +84,15 @@ void criaLinha(elemento *tmp, int addLinha)
 /*EXIBE A OCORRÊNCIA DAS PALAVRAS*/
 void mostraOcorrencia(Palavra plvr)
 {
-    printf("PALAVRA: %s | OCORRENCIA: %i | LINHAS: ", plvr.letras, plvr.qtdOcorrencias);
+    printf("PALAVRA: %s\nOCORRENCIA: %i\nLINHAS: ", plvr.letras, plvr.qtdOcorrencias);
     for (int i = 0; i < plvr.qtdOcorrencias; i++)
     {
         printf(" %d", plvr.linhas[i]);
-        printf("\n");
-    }
+    }printf("\n\n");
 
 }
 
 
-
-
-/**
- LISTAR PALAVRAS DO ÍNDICE*/
 /**
  LISTAR PALAVRAS DO ÍNDICE*/
 void Listar(elemento *lista)
@@ -112,14 +107,15 @@ void Listar(elemento *lista)
 }
 
 //Destrói Lista e retorna NULL no final
-elemento *DestruirLista(elemento *lista)
-{
-    if(lista!=NULL)
-    {
-        DestruirLista(lista->prox);
-        free(lista);
-    }
-    return NULL;
+void DestruirLista(elemento *lista){
+	elemento *aux= lista;
+	lista->ant->prox=NULL;
+
+	while(aux!=NULL){
+		lista=lista->prox;
+		free(aux);
+		aux=lista;
+	}
 }
 
 /**
@@ -164,14 +160,11 @@ void ordemAlfabetica(elemento *lst, Palavra plvr)
  INSERE PALAVRA NO FINAL DA LISTA */
 
 void insereFim(elemento *lst, Palavra plvr)
-{
-    printf("\nINSERE_FIM1\n");
+{ 
     elemento *novo = CriaElemento(plvr);
     novo->prox = lst;
     novo->ant = lst->ant;
     lst->ant->prox = novo;
     lst->ant = novo;
-    printf("\nINSERE_FIM2\n");
 }
 #endif // Trab1_h
-

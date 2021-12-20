@@ -49,4 +49,7 @@ void ordemAlfabetica(elemento *lst, Palavra plvr);
 // Inserindo no Fim da Lista
 void insereFim(elemento *lst, Palavra plvr);
 
+// Inserindo No Fim da Lista de Arquivos
+Arquivo *InsereArquivoFim(Arquivo *arq, char *NomeArq);
+
 #endif // Trab1_h

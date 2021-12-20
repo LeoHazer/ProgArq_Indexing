@@ -13,9 +13,7 @@ typedef struct Ocorrencia{
 struct Palavra{
     char letras[50]; //a palavra em questão
     int qtdOcorrencias; //quantidade de arquivos que possuem a palavra
-    Ocorrencia *ocorrencias; //lista contendo informações da ocorrência de uma palavra em
-
-    //um arquivo
+    Ocorrencia *ocorrencias; //lista contendo informações da ocorrência de uma palavra em um arquivo
 
     struct Palavra *prox;// próxima palavra encontrada em ordem alfabética)
 
@@ -34,13 +32,10 @@ struct Indice{
 };
 
 //STRUCT ELEMENTO */
-struct elemento
-{
+struct elemento{
     Palavra word;
     struct elemento *prox,*ant;
 };
-
-
 
 /**
  CRIA LISTA COM SENTINELA - OPCIONAL
@@ -187,4 +182,15 @@ void insereFim(elemento *lst, Palavra plvr)
     lst->ant->prox = novo;
     lst->ant = novo;
 }
-#endif // Trab1_h
+
+Arquivo *CriaElementoArquivo(char *NomeArq){
+    Arquivo *arq=(Arquivo *) malloc(sizeof(Arquivo));
+    strcpy(arq->nomeArquivo,NomeArq);
+    arq->prox=NULL;
+}
+
+Arquivo *InsereArquivoFim(Arquivo *arq,char *NomeArq){
+    if(arq->prox!=NULL) return InsereArquivoFim(arq->prox,NomeArq);
+    arq->prox=CriaElementoArquivo(NomeArq);
+    return arq;
+}

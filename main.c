@@ -147,6 +147,8 @@ int main()
     int contPalavra =0;
     int escolhe;
 
+    Arquivo *lista_arquivos=NULL;
+
     do
     {
 
@@ -176,7 +178,13 @@ int main()
             break;
 
         case 2:
-           
+            // Abrir indice.dat em modo escrita
+            //Escrever um numero inteiro contendo a quantidade de arquivos texto processados
+            //Para cada arquivo deve ser escrito um numero inteiro contendo a quantidade de letras do NOME do arquivo +1 e as letras do NOME do arquivo serdão seguidas de '\0'
+            //Escrever um inteiro que indica a quantidade de palavras diferentes que foram encontrada
+            //Para cada palavra, O programa deve escrever respectivamente: um inteiro que indica a quantidade de letras da palavra +1, as letras que formam a palavra seguido de '\0'. A quantidade de ocorrências.
+            //Para cada ocorrencia, deve ser escrito o núeo do arquivo onde houve a ocorrÊncia, a quantidade de vezes em que essa palavra apareceu no arquivo, os números das linhas que tinham a palavra.
+            //Fechar o Arquivo
             system("cls");
             lista = insereBinFim(&contPalavra);
             printf("\n\nInforme a palavra para buscar: ");
@@ -195,11 +203,23 @@ int main()
             system("pause");
             break;
 
-        case 3:
+        case 3: //Ler um indice
+            //Liberar memória alocada, do índice atual, se houver algum
+            DestruirLista(lista);
+            
+            //Ler o indice.dat e reconstruir a lista de arquivos processados e a lista de palavras encontradas  
+            break;
+        case 4: // Mostrar o indice atual
+            //Exibir nomes dos arquivos que o compoe
+            //Palavras em ordem alfabética, com informações de ocorrência
+            
+            break;
+        case 5:
             DestruirLista(lista);
             printf("\n\nFim do programa!\n");
             exit(-1);
             break;
+        
 
         default:
             fprintf(stderr, "Opção invalida!\n");

@@ -88,4 +88,3 @@ Arquivo *BuscarArquivo(Arquivo *lista, char *nomeArq){
         return aux;
     return NULL;
 }
-

@@ -3,28 +3,71 @@ Lista circular duplamente encadeada com sentinela - a melhor de todas!!!
 ****************************/
 
 #include "lista_ocorrencias.h"
+#include <ctype.h>
 
 typedef struct palavra{
     char letras[50];
     int qtdOcorrencias;
     Ocorrencia *ocorrencias;
-    struct palavra *prox;//,*ant;
+    struct palavra *prox,*ant;
 }Palavra;
 
 ///cria uma lista de palavras apenas com o sentinela (ele não terá ocorrências)
 Palavra *CriarListaPalavras(){
     Palavra *sentinela = (Palavra*)malloc(sizeof(Palavra));
-    sentinela->prox = NULL;//sentinela;
-    //sentinela->ant = sentinela;
+    sentinela->prox = sentinela;
+    sentinela->ant = sentinela;
     sentinela->ocorrencias = NULL;
     return sentinela;
 }
+
+//Retorna o indice da letra inicial da palavra
+int geraIndice(char *letra, int tam){
+
+char alfa[26];
+
+//Vetor de alfabeto para comparar
+for(int i = 0; i < 26; i++){
+    alfa[i] = (97 + i);
+}
+
+        int esq = 0 ;
+        int dir = tam - 1;
+        while (esq <= dir)
+        {
+            int meio = esq + (dir - esq) / 2;
+
+        int res = -1000;   //Valor aleatorio
+        if (letra == (alfa[meio]))
+            res = 0;
+
+
+            // Checa se está no meio
+            if (res == 0)
+                return meio;
+
+
+            // Se 'letra' é maior, ignora a metade esquerda
+            if (letra > (alfa[meio]))
+                esq = meio + 1;
+
+
+            // Se 'letra' é menor, ignora a metade direita
+            else
+                dir = meio - 1;
+        }
+
+        return -1;
+
+}
+
+
 
 ///destroi a lista de palavras
 Palavra *DestruirListaPalavras(Palavra *lista){
     Palavra *aux = lista;
 
-    //lista->ant->prox = NULL;
+    lista->ant->prox = NULL;
     while (aux!=NULL){
         lista = lista->prox;
         if (aux->ocorrencias) //sentinela não tem ocorrências
@@ -37,64 +80,53 @@ Palavra *DestruirListaPalavras(Palavra *lista){
 }
 
 ///insere uma palavra no fim da lista (para quando ler do arquivo binário)
-void InserirPalavraFim(Palavra *lista, char *letras, int qtdOcorrencias){
+void InserirPalavraFim(Palavra *inicio, char *letras, int qtdOcorrencias){
     Palavra *novo = (Palavra*)malloc(sizeof(Palavra));
 
     strcpy(novo->letras,letras);
     novo->qtdOcorrencias = qtdOcorrencias;
     novo->ocorrencias = CriarListaOcorrencias();
-    novo->prox=NULL;
-    
-    Palavra *aux=lista;
-    while(lista!=NULL)
-        aux=aux->prox;
-    aux=novo;
-    //novo->prox = inicio;
-    //novo->ant = inicio->ant;
 
-    //inicio->ant->prox = novo;
-    //inicio->ant = novo;
+    novo->prox = inicio;
+    novo->ant = inicio->ant;
+
+    inicio->ant->prox = novo;
+    inicio->ant = novo;
 }
 
 ///insere uma palavra em ordem alfabética na lista (para quando ler do arquivo texto)
-void InserirPalavraOrdem(Palavra **lista, char *letras){
-    //Palavra *novo = (Palavra*)malloc(sizeof(Palavra));
-    char inicial=letras[0];
-    if(inicial>=97 && inicial<=122){
-        inicial-=32;
-    }
-    int idc=inicial-65;
-    
-    InserirPalavraFim(lista[idc],letras,1);
-    // strcpy(novo->letras,letras);
-    // novo->qtdOcorrencias = 0;
-    // novo->ocorrencias = CriarListaOcorrencias();
+Palavra *InserirPalavraOrdem(Palavra *lista, char *letras){
+    Palavra *novo = (Palavra*)malloc(sizeof(Palavra));
 
-    //Palavra *aux = lista->prox;
+    strcpy(novo->letras,letras);
+    novo->qtdOcorrencias = 0;
+    novo->ocorrencias = CriarListaOcorrencias();
 
-    // while (aux!=lista && strcmp(aux->letras,letras)<0)
-    //     aux = aux->prox;
+    Palavra *aux = lista->prox;
 
-    // novo->prox = aux;
-    // novo->ant = aux->ant;
+    while (aux!=lista && strcmp(aux->letras,letras)<0)
+        aux = aux->prox;
 
-    // aux->ant->prox = novo;
-    // aux->ant = novo;
+    novo->prox = aux;
+    novo->ant = aux->ant;
 
-    //return novo;
+    aux->ant->prox = novo;
+    aux->ant = novo;
+
+    return novo;
 }
 
 ///acrescenta uma nova ocorrência para a palavra
-void AcrescentaNovaOcorrencia(Palavra *palAtual, int numLinha, int arquivo){
+void AcrescentaNovaOcorrencia(Palavra *palAtual, int numLinha, int numArquivo){
     Ocorrencia *oc = palAtual->ocorrencias->ant; //verificar qual foi a última ocorrência da palavra
-    if (oc->arquivo==arquivo){//outra ocorrência no mesmo arquivo
-        oc->qtdOcorrencias++;
-        oc->linhas = (int*) realloc(oc->linhas,sizeof(int)*oc->qtdOcorrencias);
-        oc->linhas[oc->qtdOcorrencias-1] = numLinha;
+    if (oc->numArquivo==numArquivo){//outra ocorrência no mesmo arquivo
+        oc->qtdLinhas++;
+        oc->linhas = (int*) realloc(oc->linhas,sizeof(int) * oc->qtdLinhas);
+        oc->linhas[oc->qtdLinhas-1] = numLinha;
     }else{//ocorrência num arquivo novo
         int *linhas = (int*)malloc(sizeof(int));
         linhas[0] = numLinha;
-        InserirOcorrenciaFim(palAtual->ocorrencias,arquivo,1,linhas);//insere uma nova ocorrência no final da lista
+        InserirOcorrenciaFim(palAtual->ocorrencias,numArquivo,1,linhas);//insere uma nova ocorrência no final da lista
         palAtual->qtdOcorrencias++; //aumenta o número de ocorrência da palavra
     }
 }
@@ -112,7 +144,7 @@ void LerPalavras(Palavra *lista, int qtd, FILE *arq){
 
         InserirPalavraFim(lista,letras,qtdOcorencias);
 
-        //LerOcorrencias(lista->ant->ocorrencias,qtdOcorencias,arq);-> rever
+        LerOcorrencias(lista->ant->ocorrencias,qtdOcorencias,arq);
     }
 }
 
@@ -147,9 +179,43 @@ Palavra *BuscarPalavra(Palavra *lista, char *pal){
     Palavra *aux = lista->prox;
     while (aux!=lista && strcmp(aux->letras,pal)<0)
         aux = aux->prox;
+        printf("busca1");
 
     if (aux!=lista && strcmp(aux->letras,pal)==0)
+                //printf("busca2");
+
         return aux;
     return NULL;
 }
 
+//Busca simples na lista
+Palavra *buscaSimples(Palavra *lista)
+{
+    char plvr[15];
+    int indice = 0;
+
+    printf("Digite a palavra para busca: \n");
+    fflush(stdin);
+    gets(plvr);
+    *plvr = tolower(plvr);
+
+    char *pal = strtok(plvr," ");
+    while (pal)
+    {
+        indice = plvr[0] - 97;
+        printf("Palavra digitada: %s\n", plvr);
+        printf("index da palavra: %i\n", indice);
+
+        
+
+        pal = strtok(NULL," ");
+    }
+    
+    
+    
+
+    
+
+
+    
+}

@@ -4,6 +4,7 @@ Lista circular duplamente encadeada com sentinela - a melhor de todas!!!
 
 #include "lista_ocorrencias.h"
 #include <ctype.h>
+//#include "meu_indice.h"
 
 typedef struct palavra{
     char letras[50];
@@ -179,43 +180,49 @@ Palavra *BuscarPalavra(Palavra *lista, char *pal){
     Palavra *aux = lista->prox;
     while (aux!=lista && strcmp(aux->letras,pal)<0)
         aux = aux->prox;
-        printf("busca1");
+        printf("buscaP1\n\n");
 
     if (aux!=lista && strcmp(aux->letras,pal)==0)
-                //printf("busca2");
 
         return aux;
     return NULL;
 }
 
 //Busca simples na lista
-Palavra *buscaSimples(Palavra *lista)
+int buscaSimples (Palavra *lista[])
 {
     char plvr[15];
     int indice = 0;
+    Arquivo *arq;
+    Ocorrencia *ocrr;
+
 
     printf("Digite a palavra para busca: \n");
     fflush(stdin);
     gets(plvr);
-    *plvr = tolower(plvr);
+
 
     char *pal = strtok(plvr," ");
+    printf("bSimples\n");
     while (pal)
     {
+        pal = tolower(pal);
         indice = plvr[0] - 97;
         printf("Palavra digitada: %s\n", plvr);
         printf("index da palavra: %i\n", indice);
 
-        
 
+        if (BuscarPalavra(lista[indice], pal))
+        {
+            printf("ACHOU!!\n");
+        }
+        printf("bSimples_2\n");
         pal = strtok(NULL," ");
+        printf("index bSim: %d%\n", indice);
+
+        return indice;
     }
-    
-    
-    
 
-    
+return 0;
 
-
-    
 }

@@ -22,10 +22,48 @@ Indice CriarIndice(){
     {
         resp.iniciais[i] = CriarListaPalavras();
     }
-    
 
-    return resp; 
+
+    return resp;
 }
+
+
+int MenuBusca(Indice *ind){
+
+        system("cls");
+        int resp = 0;
+        int indice  = 0;
+        printf("1 - Busca simples\n");
+        printf("2 - Busca composta (operador 'E')\n");
+        printf("3 - Busca composta (operador 'OU')\n");
+        scanf("%d", &resp);
+
+        switch (resp)
+        {
+        case 1:
+                indice = buscaSimples(&ind->iniciais);
+                if(buscaSimples(&ind->iniciais) != 0){
+                    //MostrarIndice(ind);
+                    MostrarPalavras(ind->iniciais[indice]);
+                }
+
+                system("pause");
+                break;
+        case 2:
+                break;
+
+
+        default:
+               exit(-1);
+        }
+return 0;
+
+}
+
+
+
+
+
 
 ///destroi o indice (de fato, destroi apenas as listas)
 void DestruirIndice(Indice *ind){
@@ -49,13 +87,13 @@ Indice LerIndice(){
     fread(&resp.qtdPalavras,sizeof(int),1,arq);
    // LerPalavras(resp.palavras,resp.qtdPalavras,arq);
      //Fazer um for para os indices das iniciais(?)
-    
+
     for (int i = 0; i < 26; i++)
     {
         LerPalavras(resp.iniciais[i],resp.qtdPalavras,arq);
     }
-    
-    
+
+
     printf("O indice lido tem %d palavras\n",resp.qtdPalavras);
 
     fclose(arq);
@@ -68,7 +106,7 @@ void SalvarIndice(Indice ind){
     FILE *arq = fopen(NOME_ARQ_INDICE,"wb");
 
     Palavra novo = **ind.iniciais;
-    fwrite(&ind.qtdArquivos,sizeof(int),1,arq); 
+    fwrite(&ind.qtdArquivos,sizeof(int),1,arq);
     SalvarArquivos(ind.arquivos,arq);
     fwrite(&ind.qtdPalavras,sizeof(int),1,arq);
   //SalvarPalavras(ind.palavras,arq); FAZER LAÇO PARA CADA LETRA (ind)
@@ -76,7 +114,7 @@ void SalvarIndice(Indice ind){
     {
         SalvarPalavras(ind.iniciais[i], arq);
     }
-    
+
     fclose(arq);
 }
 
@@ -91,26 +129,26 @@ void MostrarIndice(Indice ind){
   {
       MostrarPalavras(ind.iniciais[i]);
   }
-  
+
     printf("\n");
 }
 
 
 ///processa uma linha de um arquivo texto
 void ProcessarLinha(Indice *ind, char *linha, int numLinha){
-    
+
     linha = tolower(linha);
     char *pal = strtok(linha," ");
     int indice = 0;
-    
+
     while (pal){
         indice = pal[0] - 97;
         printf("Valor index: %d\n", indice);
         printf("%c\n", pal[0]);
-       
+
         Palavra *palavra = BuscarPalavra(ind->iniciais[indice], pal);
         printf("retorno busca %d\n", palavra);
-        
+
 
         if (palavra==NULL){//palavra nao encontrada (primeira ocorrencia no indice)
             printf("insere palavra %d\n", ind->iniciais[indice]);

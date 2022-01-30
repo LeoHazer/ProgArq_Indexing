@@ -15,31 +15,8 @@ int Menu(){
     return resp;
 }
 
-int MenuBusca(Indice ind){
-        
-        system("cls");
-        int resp = 0;
-        printf("1 - Busca simples\n");
-        printf("2 - Busca composta (operador 'E')\n");
-        printf("3 - Busca composta (operador 'OU')\n");
-        scanf("%d", &resp);
-
-        switch (resp)
-        {
-        case 1:
-                buscaSimples(ind.iniciais);
-                system("pause");
-                break;
-        case 2:
-                break;
-
-        
-        default:
-               Menu();
-        }
 
 
-}
 
 int main(){
     int op;
@@ -47,7 +24,7 @@ int main(){
     Indice ind = CriarIndice();
 
     do{
-        
+
         system("cls");
         op = Menu();
         switch(op){
@@ -55,21 +32,26 @@ int main(){
                 printf("Digite o nome do arquivo texto:");
                 scanf("%s",nomeArq);
                 ProcessarArquivo(&ind,nomeArq);
+                system("pause");
                 break;
         case 2:
                 SalvarIndice(ind);
                 printf("Indice atual salvo com sucesso!\n");
+                system("pause");
                 break;
         case 3:
                 DestruirIndice(&ind);
                 printf("Indice atual destruido!\n");
                 ind = LerIndice();
+                system("pause");
                 break;
         case 4:
                 MostrarIndice(ind);
+                system("pause");
                 break;
         case 5:
-                MenuBusca(ind);
+                MenuBusca(&ind);
+                system("pause");
                 break;
         }
     }while(op!=6);
